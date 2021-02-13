@@ -110,4 +110,4 @@ f.write(buff)
 f.close()
 
 # removing the log
-subprocess.run(["rm -rf","geckodriver.log"])
+subprocess.run(["rm", "-rf","geckodriver.log"])
