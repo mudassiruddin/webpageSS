@@ -1,0 +1,113 @@
+#!/usr/bin/python3
+
+from selenium import webdriver
+from time import sleep
+import sys
+import subprocess
+
+# Banner
+def banner():
+    print("\033[1;37;40m                      _                                  ___    ___   ")
+    print("                     ( )                                (  _`\ (  _`\ ")
+    print("    _   _   _    __  | |_    _ _      _ _    __     __  | (_(_)| (_(_)")
+    print("   ( ) ( ) ( ) /'__`\| '_`\ ( '_`\  /'_` ) /'_ `\ /'__`\`\__ \ `\__ \ ")
+    print("   | \_/ \_/ |(  ___/| |_) )| (_) )( (_| |( (_) |(  ___/( )_) |( )_) |")
+    print("   `\___x___/'`\____)(_,__/'| ,__/'`\__,_)`\__  |`\____)`\____)`\____)")
+    print("                            | |           ( )_) |                     ")
+    print("                            (_)            \___/'                    \033[1;37;0m ")
+
+    print("\n                                                Created by Mudassir Alvi")
+    print("                                                 Twitter:    SyedMudassirud2")
+    print("                                               Instagram:    lvomer")
+    print("                                                  Github:    mudassiruddin")
+
+# A a function to display help
+def DisplayHelp():
+    print("\nUsage : \n\t webpageSS [flags]")
+    print("\nFlags :\n")
+    print("-u <string>                Input list of valied Url, Each url in each line (required)")
+    print("-o <string>                Provide the ouput direcotry name (optional) (defaul:WebpageSS)")
+    print("-h                         Display help page\n")
+    exit (0)
+
+# Getting the inputs form the user
+url_list_name = ''
+output_dir_name = ''
+for i in range(0,len(sys.argv)):
+    if sys.argv[i] == '-h':
+        DisplayHelp()
+        
+    if (sys.argv[i] == '-u') and((i+1)<len(sys.argv)):
+        if sys.argv[i+1] != '-o': 
+            url_list_name = sys.argv[i+1]
+
+    if sys.argv[i] == '-o' and ((i+1) < len(sys.argv)):
+        output_dir_name = sys.argv[i+1]
+
+if url_list_name == '':
+    print(' -u flag not set ')
+    DisplayHelp()
+
+if output_dir_name == '':
+    output_dir_name = 'WebpageSS'
+
+
+# A Function to fetch data from flie in list format 
+def readFile(fileName):
+        fileObj = open(fileName, "r") 
+        words = fileObj.read().splitlines()
+        fileObj.close()
+        return words
+
+# A fuction to take SS and save it
+def TakeSS(url,img_name):
+    # take screenshot
+    driver = webdriver.Firefox()
+    driver.get(url);
+    driver.save_screenshot(img_name);
+    driver.quit()
+    sleep(1)
+
+#---------------Main--------------
+#printing banner
+banner()
+
+# Loading the url_list_name as a list 
+url_list = readFile(url_list_name)
+
+#making dirs
+path = './' + output_dir_name
+subprocess.run(["mkdir", path])
+
+#making dir for screenshots
+path = path + '/Screenshots/'
+subprocess.run(["mkdir",path])
+
+# Taking SS
+i = 1;
+for url in url_list:
+
+    TakeSS(url,path + str(i) + '.png')
+    i = i+1
+
+# Making an html file 
+f = open("./"+output_dir_name+"/Index.html","a+")
+
+# head buffer
+buff = '<!DOCTYPE html>\n <html>\n <head>\n <style>\n img {\n width: 30%;\n height:30%;\n border: 1px solid black;\n padding: 1%;\n \n }\n \n body {\n background-color: #303030;\n }\n  </style>\n </head>\n <body>\n \n'
+f.write(buff)
+image_no = 1
+
+for url in url_list:
+    # tag buffer
+    buff = '<a href="'+url+'">\n <img src="./Screenshots/'+ str(image_no)+'.png" alt="HTML5 Icon">\n </a>\n'
+    f.write(buff)
+    image_no = image_no + 1
+
+# footer buffer
+buff = '\n </body>\n </html> \n'
+f.write(buff)
+f.close()
+
+# removing the log
+subprocess.run(["rm -rf","geckodriver.log"])
