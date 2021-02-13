@@ -17,6 +17,8 @@ $ git clone https://github.com/Mudassiruddin/webpageSS
 $ cd webpageSS
 $ chmod +x webpageSS
 $ sudo pip3 install selenium
+$ sudo pip3 install webdrivermanager
+$ sudo webdrivermanager firefox --linkpath /usr/local/bin
 $ sudo cp ./webpageSS /usr/local/bin
 ```
 ## Usage
